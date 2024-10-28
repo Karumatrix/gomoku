@@ -21,6 +21,8 @@ NAME = pbrain-gomoku-ai
 
 FLAGS = -Wall -Wextra
 
+DEBUG_FLAGS = -g3
+
 $(NAME): $(OBJ_MAIN) $(OBJ)
 	g++ -o $(NAME) $(OBJ_MAIN) $(OBJ) -std=c++20 $(FLAGS)
 
@@ -34,5 +36,8 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+debug: $(OBJ_MAIN) $(OBJ)
+	g++ -o $(NAME) $(OBJ_MAIN) $(OBJ) -std=c++20 $(FLAGS) $(DEBUG_FLAGS)
 
 .PHONY: all clean fclean
