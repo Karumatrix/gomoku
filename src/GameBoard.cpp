@@ -22,6 +22,11 @@ void GameBoard::resize(size_t newSize)
     _size = newSize;
 }
 
+size_t GameBoard::getSize() const
+{
+    return _size;
+}
+
 GameCase GameBoard::getCaseState(int x, int y) const
 {
     if (x >= _size || y >= _size) {
