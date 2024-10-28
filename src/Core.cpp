@@ -37,7 +37,6 @@ void Core::run()
         std::getline(std::cin, commandBuf);
         redirect_command(commandBuf);
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            std::cout << "Processing new turn" << std::endl;
             // Replace above line by AI result
             bestPositions = {0, 0};
             _board.setCaseState(bestPositions.x, bestPositions.y, GameCase::PLAYER);
@@ -157,6 +156,8 @@ void Core::boardCommand(std::vector<std::string> parsedCommand)
             }
         }
     }
+    _isGameStarted = true;
+    _isMyTurn = true;
 }
 
 void Core::infoCommand(std::vector<std::string> parsedCommand)
