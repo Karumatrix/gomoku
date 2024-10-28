@@ -22,6 +22,6 @@ class GameBoard {
 
     protected:
     private:
-        size_t size = 0;
+        size_t _size = 0;
         std::vector<std::vector<GameCase>> _board;
 };

@@ -10,5 +10,6 @@
 enum GameCase {
     DEFAULT,
     PLAYER,
-    OPPONENT
+    OPPONENT,
+    OUTOFBOUND
 };

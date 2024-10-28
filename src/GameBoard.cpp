@@ -28,5 +28,7 @@ void GameBoard::resize(size_t newSize)
 
 GameCase GameBoard::getCaseState(int x, int y) const
 {
+    if (x >= _size || y >= _size)
+        return GameCase::OUTOFBOUND;
     return _board[x][y];
 }
