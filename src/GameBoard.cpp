@@ -18,17 +18,24 @@ GameBoard::~GameBoard()
 void GameBoard::resize(size_t newSize)
 {
     _board.clear();
-    _board.resize(newSize);
-    for (auto line : _board) {
-        line.resize(newSize);
-        for (auto boardCase : line)
-            boardCase = GameCase::DEFAULT;
-    }
+    _board.resize(newSize * newSize, GameCase::DEFAULT);
+    _size = newSize;
 }
 
 GameCase GameBoard::getCaseState(int x, int y) const
 {
-    if (x >= _size || y >= _size)
+    if (x >= _size || y >= _size) {
+        std::cout << "ERROR Positions given are out of bounds" << std::endl;
         return GameCase::OUTOFBOUND;
-    return _board[x][y];
+    }
+    return _board[y * _size + x];
+}
+
+void GameBoard::setCaseState(int x, int y, GameCase state)
+{
+    if (x >= _size || y >= _size) {
+        std::cout << "ERROR Positions given are out of bounds" << std::endl;
+        return;
+    }
+    _board[y * _size + x] = state;
 }
