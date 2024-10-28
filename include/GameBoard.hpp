@@ -18,6 +18,7 @@ class GameBoard {
         ~GameBoard();
 
         void resize(size_t newSize);
+        size_t getSize() const;
 
         GameCase getCaseState(int x, int y) const;
         void setCaseState(int x, int y, GameCase state);
