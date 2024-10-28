@@ -252,25 +252,25 @@ void Core::aboutCommand(std::vector<std::string> parsedCommand)
 
 void Core::rectstartCommand(std::vector<std::string> parsedCommand)
 {
-    std::cout << "Rectstart command" << std::endl;
+    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
 void Core::restartCommand(std::vector<std::string> parsedCommand)
 {
-    std::cout << "Restart command" << std::endl;
+    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
 void Core::takebackCommand(std::vector<std::string> parsedCommand)
 {
-    std::cout << "Takeback command" << std::endl;
+    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
 void Core::playCommand(std::vector<std::string> parsedCommand)
 {
-    std::cout << "Play command" << std::endl;
+    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
 void Core::swap2boardCommand(std::vector<std::string> parsedCommand)
 {
-    std::cout << "Swap2board command" << std::endl;
+    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
