@@ -31,16 +31,27 @@ void Core::run()
 {
     std::string commandBuf;
     Positions bestPositions;
+    bool positionFound = false;
 
     while (_isRunning) {
         commandBuf.clear();
         std::getline(std::cin, commandBuf);
         redirect_command(commandBuf);
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            // Replace above line by AI result
-            bestPositions = {0, 0};
-            _board.setCaseState(bestPositions.x, bestPositions.y, GameCase::PLAYER);
-            std::cout << bestPositions.x << "," << bestPositions.y << std::endl;
+            // Replace above lines by AI result
+            for (int x = 0; x < _board.getSize(); x++) {
+                for (int y = 0; y < _board.getSize(); y++) {
+                    if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
+                        _board.setCaseState(x, y, GameCase::PLAYER);
+                        std::cout << x << "," << y << std::endl;
+                        positionFound = true;
+                        break;
+                    }
+                }
+                if (positionFound)
+                    break;
+            }
+            positionFound = false;
             _isMyTurn = false;
         }
     }
