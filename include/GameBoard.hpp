@@ -22,9 +22,12 @@ class GameBoard {
 
         GameCase getCaseState(int x, int y) const;
         void setCaseState(int x, int y, GameCase state);
+        float Evaluate();
 
     protected:
     private:
         size_t _size = 0;
         std::vector<GameCase> _board;
+
+        int evaluateLine(int x, int y, int dx, int dy);
 };
