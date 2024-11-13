@@ -19,7 +19,7 @@ class MiniMax {
         ~MiniMax();
 
         int minimax(int depth, bool playerMax);
-        std::vector<int, int> getPossibleMoves();
+        std::vector<std::pair<int, int>> getPossibleMoves();
     protected:
     private:
         GameBoard _gameBoard;
