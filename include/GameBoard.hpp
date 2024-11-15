@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <vector>
+#include <array>
 #include <iostream>
 
 #include "GameCase.hpp"
@@ -26,5 +26,5 @@ class GameBoard {
     protected:
     private:
         size_t _size = 0;
-        std::vector<GameCase> _board;
+        std::array<std::array<GameCase, 20>, 20> _board;
 };

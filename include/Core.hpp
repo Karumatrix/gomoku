@@ -16,17 +16,13 @@
 #include <bitset>
 
 #include "GameBoard.hpp"
+#include "Positions.hpp"
 
 enum class GameType : size_t {
     HUMAN = 0,
     BRAIN = 1,
     TOURNAMENT = 2,
     NETWORK_TOURNAMENT = 3
-};
-
-struct Positions {
-    int x;
-    int y;
 };
 
 class Core {

@@ -59,7 +59,8 @@ void Core::run()
 
 void Core::redirect_command(std::string command)
 {
-    std::vector<std::string> parsedCommand = split(command, " ");
+    std::string realCommand = command.substr(0, command.size() - 1);
+    std::vector<std::string> parsedCommand = split(realCommand, " ");
     auto commandHandler = _commands.find(parsedCommand[0]);
     if (commandHandler == _commands.end())
         std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
@@ -130,7 +131,7 @@ void Core::startCommand(std::vector<std::string> parsedCommand)
             else {
                 _board.resize(size);
                 _isGameStarted = true;
-                std::cout << "OK - everything is good" << std::endl;
+                std::cout << "OK" << std::endl;
             }
         }
     }
@@ -259,7 +260,7 @@ void Core::endCommand(std::vector<std::string> parsedCommand)
 
 void Core::aboutCommand(std::vector<std::string> parsedCommand)
 {
-    std::cout << "name=\"" << _name << "\", version=\"" << _version << "\", authors=\"" << _authors << "\", country=\"" << _country << "\"" << std::endl;
+    std::cout << "name=\"" << _name << "\", version=\"" << _version << "\", author=\"" << _authors << "\", country=\"" << _country << "\"" << std::endl;
 }
 
 void Core::rectstartCommand(std::vector<std::string> parsedCommand)
