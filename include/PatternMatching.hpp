@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include <vector>
+#include <algorithm>
+
 #include "Positions.hpp"
 #include "GameBoard.hpp"
 
@@ -17,7 +20,8 @@ class PatternMatching {
 
         Positions getBestPositions(GameBoard &board);
     private:
-        bool checkVerticalWeakness(int x, int y, size_t size);
-        bool checkHorizontalWeakness(int x, int y, size_t size);
-        bool checkDiagonalWeakness(int x, int y, size_t size);
+        std::vector<std::pair<Positions, Priority>> &checkVerticalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
+        std::vector<std::pair<Positions, Priority>> &checkHorizontalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
+        std::vector<std::pair<Positions, Priority>> &checkDiagonalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
+        std::vector<std::pair<Positions, Priority>> &addToBestPositions(std::vector<std::pair<Positions, Priority>> &positions, std::vector<Positions> &tmp, int &nbCaseTaken);
 };

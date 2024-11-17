@@ -11,3 +11,8 @@ struct Positions {
     int x;
     int y;
 };
+
+struct Priority {
+    int size;
+    int nbAlreadyFound;
+};
