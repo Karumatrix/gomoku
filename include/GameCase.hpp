@@ -7,7 +7,9 @@
 
 #pragma once
 
-enum GameCase {
+#include <cstdint>
+
+enum class GameCase : uint32_t {
     DEFAULT,
     PLAYER,
     OPPONENT,
