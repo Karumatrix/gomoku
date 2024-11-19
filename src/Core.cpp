@@ -30,7 +30,6 @@ Core::~Core()
 void Core::run()
 {
     std::string commandBuf;
-    Positions bestPositions;
     bool positionFound = false;
 
     while (_isRunning) {
@@ -39,23 +38,43 @@ void Core::run()
         redirect_command(commandBuf);
         commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            bestPositions = _defenseChecker.getBestPositions(_board);
-            if (bestPositions.x == -1 || bestPositions.y == -1) {
-                for (int x = 0; x < _board.getSize(); x++) {
-                    for (int y = 0; y < _board.getSize(); y++) {
-                        if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
-                            _board.setCaseState(x, y, GameCase::PLAYER);
-                            std::cout << x << "," << y << std::endl;
-                            positionFound = true;
-                            break;
-                        }
-                    }
-                    if (positionFound)
-                        break;
-                }
+            auto bestDefense = _patternMatching.getBestPositions(_board, GameCase::PLAYER, GameCase::OPPONENT);
+            auto bestAttack = _patternMatching.getBestPositions(_board, GameCase::OPPONENT, GameCase::PLAYER);
+
+            if (bestAttack.second.size == 4) {
+                _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
+                std::cout << "DEBUG Attack" << std::endl;
+                std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
+            } else if (bestDefense.second.size == 4) {
+                _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
+                std::cout << "DEBUG Defense" << std::endl;
+                std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
             } else {
-                _board.setCaseState(bestPositions.x, bestPositions.y, GameCase::PLAYER);
-                std::cout << bestPositions.x << "," << bestPositions.y << std::endl;
+                if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) && (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
+                    for (int x = 0; x < _board.getSize(); x++) {
+                        for (int y = 0; y < _board.getSize(); y++) {
+                            if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
+                                _board.setCaseState(x, y, GameCase::PLAYER);
+                                std::cout << "DEBUG Auto" << std::endl;
+                                std::cout << x << "," << y << std::endl;
+                                positionFound = true;
+                                break;
+                            }
+                        }
+                        if (positionFound)
+                            break;
+                    }
+                } else {
+                    if (bestAttack.second.nbAlreadyFound > bestDefense.second.nbAlreadyFound) {
+                        _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
+                        std::cout << "DEBUG Attack" << std::endl;
+                        std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
+                    } else {
+                        _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
+                        std::cout << "DEBUG Defense" << std::endl;
+                        std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
+                    }
+                }
             }
             positionFound = false;
             _isMyTurn = false;

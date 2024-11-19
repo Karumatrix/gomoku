@@ -15,37 +15,37 @@ PatternMatching::~PatternMatching()
 {
 }
 
-Positions PatternMatching::getBestPositions(GameBoard &board)
+std::pair<Positions, Priority> PatternMatching::getBestPositions(GameBoard &board, GameCase defense, GameCase attack)
 {
     std::vector<std::pair<Positions, Priority>> bestPos;
     size_t boardSize = board.getSize();
 
     for (int x = 0; x < boardSize - 3; x++) {
         for (int y = 0; y < boardSize - 3; y++) {
-            bestPos = checkDiagonalWeakness(x, y, board, bestPos);
-            bestPos = checkHorizontalWeakness(x, y, board, bestPos);
-            bestPos = checkVerticalWeakness(x, y, board, bestPos);
+            bestPos = checkDiagonalWeakness(x, y, board, bestPos, defense, attack);
+            bestPos = checkHorizontalWeakness(x, y, board, bestPos, defense, attack);
+            bestPos = checkVerticalWeakness(x, y, board, bestPos, defense, attack);
         }
     }
     if (bestPos.size() == 0)
-        return {-1, -1};
+        return {{-1, -1}, {-1, -1}};
     std::sort(bestPos.begin(), bestPos.end(), [](const std::pair<Positions, Priority> &elem1, const std::pair<Positions, Priority> &elem2) {
         if (elem1.second.size != elem2.second.size)
             return elem1.second.size > elem2.second.size;
         return elem1.second.nbAlreadyFound > elem2.second.nbAlreadyFound;
     });
-    return bestPos.at(0).first;
+    return bestPos.at(0);
 }
 
-std::vector<std::pair<Positions, Priority>> &PatternMatching::checkVerticalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPos)
+std::vector<std::pair<Positions, Priority>> &PatternMatching::checkVerticalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPos, GameCase defense, GameCase attack)
 {
     int nbCaseTaken = 0;
     std::vector<Positions> tmpPos;
 
     for (int i = 0; i < 5; i++) {
-        if (board.getCaseState(x + i, y) == GameCase::PLAYER || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
+        if (board.getCaseState(x + i, y) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
             return bestPos;
-        if (board.getCaseState(x + i, y) == GameCase::OPPONENT)
+        if (board.getCaseState(x + i, y) == attack)
             nbCaseTaken += 1;
         if (board.getCaseState(x + i, y) == GameCase::DEFAULT)
             tmpPos.push_back({x + i, y});
@@ -55,15 +55,15 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkVerticalWeakn
     return bestPos;
 }
 
-std::vector<std::pair<Positions, Priority>> &PatternMatching::checkHorizontalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPos)
+std::vector<std::pair<Positions, Priority>> &PatternMatching::checkHorizontalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPos, GameCase defense, GameCase attack)
 {
     int nbCaseTaken = 0;
     std::vector<Positions> tmpPos;
 
     for (int i = 0; i < 5; i++) {
-        if (board.getCaseState(x, y + i) == GameCase::PLAYER || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
+        if (board.getCaseState(x, y + i) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
             return bestPos;
-        if (board.getCaseState(x, y + i) == GameCase::OPPONENT)
+        if (board.getCaseState(x, y + i) == attack)
             nbCaseTaken += 1;
         if (board.getCaseState(x, y + i) == GameCase::DEFAULT)
             tmpPos.push_back({x, y + i});
@@ -73,17 +73,17 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkHorizontalWea
     return bestPos;
 }
 
-std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPos)
+std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPos, GameCase defense, GameCase attack)
 {
     int nbCaseTaken = 0;
     std::vector<Positions> tmpPos;
 
     for (int i = 0; i < 5; i++) {
-        if (board.getCaseState(x + i, y + i) == GameCase::PLAYER || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND) {
+        if (board.getCaseState(x + i, y + i) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND) {
             tmpPos.clear();
             break;
         }
-        if (board.getCaseState(x + i, y + i) == GameCase::OPPONENT)
+        if (board.getCaseState(x + i, y + i) == attack)
             nbCaseTaken += 1;
         if (board.getCaseState(x + i, y + i) == GameCase::DEFAULT)
             tmpPos.push_back({x + i, y + i});
@@ -93,9 +93,9 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakn
     nbCaseTaken = 0;
     tmpPos.clear();
     for (int i = 4; i >= 0; i--) {
-        if (board.getCaseState(x + (4 - i), y + i) == GameCase::PLAYER || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
+        if (board.getCaseState(x + (4 - i), y + i) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
             return bestPos;
-        if (board.getCaseState(x + (4 - i), y + i) == GameCase::OPPONENT)
+        if (board.getCaseState(x + (4 - i), y + i) == attack)
             nbCaseTaken += 1;
         if (board.getCaseState(x + (4 - i), y + i) == GameCase::DEFAULT)
             tmpPos.push_back({x + (4 - i), y + i});
