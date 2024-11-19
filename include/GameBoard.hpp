@@ -22,11 +22,13 @@ class GameBoard {
 
         GameCase getCaseState(int x, int y) const;
         void setCaseState(int x, int y, GameCase state);
+        float Evaluate();
 
         void printBoard() const;
 
     protected:
     private:
         size_t _size = 0;
+        int evaluateLine(int x, int y, int dx, int dy);
         std::array<std::array<GameCase, 20>, 20> _board;
 };
