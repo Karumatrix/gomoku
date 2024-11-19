@@ -2,3 +2,7 @@
 *.vscode
 *pbrain-gomoku-ai
 *vgcore*
+*.log
+liskvork
+*.ini
+test.txt

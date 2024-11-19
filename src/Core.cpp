@@ -37,19 +37,25 @@ void Core::run()
         commandBuf.clear();
         std::getline(std::cin, commandBuf);
         redirect_command(commandBuf);
+        commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            // Replace above lines by AI result
-            for (int x = 0; x < _board.getSize(); x++) {
-                for (int y = 0; y < _board.getSize(); y++) {
-                    if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
-                        _board.setCaseState(x, y, GameCase::PLAYER);
-                        std::cout << x << "," << y << std::endl;
-                        positionFound = true;
-                        break;
+            bestPositions = _defenseChecker.getBestPositions(_board);
+            if (bestPositions.x == -1 || bestPositions.y == -1) {
+                for (int x = 0; x < _board.getSize(); x++) {
+                    for (int y = 0; y < _board.getSize(); y++) {
+                        if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
+                            _board.setCaseState(x, y, GameCase::PLAYER);
+                            std::cout << x << "," << y << std::endl;
+                            positionFound = true;
+                            break;
+                        }
                     }
+                    if (positionFound)
+                        break;
                 }
-                if (positionFound)
-                    break;
+            } else {
+                _board.setCaseState(bestPositions.x, bestPositions.y, GameCase::PLAYER);
+                std::cout << bestPositions.x << "," << bestPositions.y << std::endl;
             }
             positionFound = false;
             _isMyTurn = false;
@@ -57,8 +63,9 @@ void Core::run()
     }
 }
 
-void Core::redirect_command(std::string command)
+void Core::redirect_command(std::string &command)
 {
+    std::replace(command.begin(), command.end(), '\r', '\0');
     std::vector<std::string> parsedCommand = split(command, " ");
     auto commandHandler = _commands.find(parsedCommand[0]);
     if (commandHandler == _commands.end())
@@ -80,7 +87,7 @@ bool Core::isInteger(const std::string &str)
     }
 }
 
-std::vector<std::string> Core::split(std::string s, std::string delimiter)
+std::vector<std::string> Core::split(std::string &s, const std::string delimiter)
 {
     size_t pos_start = 0;
     size_t pos_end = 0;
@@ -98,7 +105,7 @@ std::vector<std::string> Core::split(std::string s, std::string delimiter)
     return res;
 }
 
-void Core::turnCommand(std::vector<std::string> parsedCommand)
+void Core::turnCommand(std::vector<std::string> &parsedCommand)
 {
     std::vector<std::string> positionsArg;
 
@@ -115,7 +122,7 @@ void Core::turnCommand(std::vector<std::string> parsedCommand)
     }
 }
 
-void Core::startCommand(std::vector<std::string> parsedCommand)
+void Core::startCommand(std::vector<std::string> &parsedCommand)
 {
     if (parsedCommand.size() != 2) {
         std::cout << "ERROR Size not given" << std::endl;
@@ -130,18 +137,18 @@ void Core::startCommand(std::vector<std::string> parsedCommand)
             else {
                 _board.resize(size);
                 _isGameStarted = true;
-                std::cout << "OK - everything is good" << std::endl;
+                std::cout << "OK" << std::endl;
             }
         }
     }
 }
 
-void Core::beginCommand(std::vector<std::string> parsedCommand)
+void Core::beginCommand(std::vector<std::string> &parsedCommand)
 {
     _isMyTurn = true;
 }
 
-void Core::boardCommand(std::vector<std::string> parsedCommand)
+void Core::boardCommand(std::vector<std::string> &parsedCommand)
 {
     std::string tmpBuf = "";
     std::vector<std::string> parsedTmpBuf;
@@ -171,7 +178,7 @@ void Core::boardCommand(std::vector<std::string> parsedCommand)
     _isMyTurn = true;
 }
 
-void Core::infoCommand(std::vector<std::string> parsedCommand)
+void Core::infoCommand(std::vector<std::string> &parsedCommand)
 {
     std::string key;
     if (parsedCommand.size() != 3) {
@@ -252,37 +259,37 @@ void Core::infoCommand(std::vector<std::string> parsedCommand)
     }
 }
 
-void Core::endCommand(std::vector<std::string> parsedCommand)
+void Core::endCommand(std::vector<std::string> &parsedCommand)
 {
     _isRunning = false;
 }
 
-void Core::aboutCommand(std::vector<std::string> parsedCommand)
+void Core::aboutCommand(std::vector<std::string> &parsedCommand)
 {
-    std::cout << "name=\"" << _name << "\", version=\"" << _version << "\", authors=\"" << _authors << "\", country=\"" << _country << "\"" << std::endl;
+    std::cout << "name=\"" << _name << "\", version=\"" << _version << "\", author=\"" << _authors << "\", country=\"" << _country << "\"" << std::endl;
 }
 
-void Core::rectstartCommand(std::vector<std::string> parsedCommand)
-{
-    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
-}
-
-void Core::restartCommand(std::vector<std::string> parsedCommand)
+void Core::rectstartCommand(std::vector<std::string> &parsedCommand)
 {
     std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
-void Core::takebackCommand(std::vector<std::string> parsedCommand)
+void Core::restartCommand(std::vector<std::string> &parsedCommand)
 {
     std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
-void Core::playCommand(std::vector<std::string> parsedCommand)
+void Core::takebackCommand(std::vector<std::string> &parsedCommand)
 {
     std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }
 
-void Core::swap2boardCommand(std::vector<std::string> parsedCommand)
+void Core::playCommand(std::vector<std::string> &parsedCommand)
+{
+    std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
+}
+
+void Core::swap2boardCommand(std::vector<std::string> &parsedCommand)
 {
     std::cout << "UNKNOW Command '" << parsedCommand[0] << "' is unknown" << std::endl;
 }

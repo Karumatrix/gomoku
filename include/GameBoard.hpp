@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <vector>
+#include <array>
 #include <iostream>
 
 #include "GameCase.hpp"
@@ -24,10 +24,11 @@ class GameBoard {
         void setCaseState(int x, int y, GameCase state);
         float Evaluate();
 
+        void printBoard() const;
+
     protected:
     private:
         size_t _size = 0;
-        std::vector<GameCase> _board;
-
         int evaluateLine(int x, int y, int dx, int dy);
+        std::array<std::array<GameCase, 20>, 20> _board;
 };
