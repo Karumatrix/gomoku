@@ -7,21 +7,27 @@
 
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
-#include "Positions.hpp"
 #include "GameBoard.hpp"
+#include "Positions.hpp"
 
 class PatternMatching {
-    public:
-        PatternMatching();
-        ~PatternMatching();
+  public:
+    PatternMatching();
+    ~PatternMatching();
 
-        Positions getBestPositions(GameBoard &board);
-    private:
-        std::vector<std::pair<Positions, Priority>> &checkVerticalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
-        std::vector<std::pair<Positions, Priority>> &checkHorizontalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
-        std::vector<std::pair<Positions, Priority>> &checkDiagonalWeakness(int x, int y, GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
-        std::vector<std::pair<Positions, Priority>> &addToBestPositions(std::vector<std::pair<Positions, Priority>> &positions, std::vector<Positions> &tmp, int &nbCaseTaken);
+    Positions getBestPositions(GameBoard &board);
+
+  private:
+    std::vector<std::pair<Positions, Priority>> &checkVerticalWeakness(int x, int y,
+        GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
+    std::vector<std::pair<Positions, Priority>> &checkHorizontalWeakness(int x, int y,
+        GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
+    std::vector<std::pair<Positions, Priority>> &checkDiagonalWeakness(int x, int y,
+        GameBoard &board, std::vector<std::pair<Positions, Priority>> &bestPositions);
+    std::vector<std::pair<Positions, Priority>> &addToBestPositions(
+        std::vector<std::pair<Positions, Priority>> &positions, std::vector<Positions> &tmp,
+        int &nbCaseTaken);
 };

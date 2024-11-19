@@ -23,9 +23,7 @@ Core::Core()
     _commands["SWAP2BOARD"] = std::bind(&Core::swap2boardCommand, this, std::placeholders::_1);
 }
 
-Core::~Core()
-{
-}
+Core::~Core() {}
 
 void Core::run()
 {
@@ -39,6 +37,8 @@ void Core::run()
         redirect_command(commandBuf);
         commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
+            int score = _board.Evaluate();
+            std::cout << "Current score: " << score << std::endl;
             bestPositions = _defenseChecker.getBestPositions(_board);
             if (bestPositions.x == -1 || bestPositions.y == -1) {
                 for (int x = 0; x < _board.getSize(); x++) {
@@ -80,9 +80,9 @@ bool Core::isInteger(const std::string &str)
         std::size_t pos;
         std::stoi(str, &pos);
         return pos == str.size();
-    } catch (const std::invalid_argument&) {
+    } catch (const std::invalid_argument &) {
         return false;
-    } catch (const std::out_of_range&) {
+    } catch (const std::out_of_range &) {
         return false;
     }
 }
@@ -116,7 +116,8 @@ void Core::turnCommand(std::vector<std::string> &parsedCommand)
         if (positionsArg.size() != 2 || !isInteger(positionsArg[0]) || !isInteger(positionsArg[1]))
             std::cout << "ERROR Coordinates must be two integers" << std::endl;
         else {
-            _board.setCaseState(std::stoi(positionsArg[0]), std::stoi(positionsArg[1]), GameCase::OPPONENT);
+            _board.setCaseState(
+                std::stoi(positionsArg[0]), std::stoi(positionsArg[1]), GameCase::OPPONENT);
             _isMyTurn = true;
         }
     }
@@ -143,10 +144,7 @@ void Core::startCommand(std::vector<std::string> &parsedCommand)
     }
 }
 
-void Core::beginCommand(std::vector<std::string> &parsedCommand)
-{
-    _isMyTurn = true;
-}
+void Core::beginCommand(std::vector<std::string> &parsedCommand) { _isMyTurn = true; }
 
 void Core::boardCommand(std::vector<std::string> &parsedCommand)
 {
@@ -158,19 +156,22 @@ void Core::boardCommand(std::vector<std::string> &parsedCommand)
         if (tmpBuf == "DONE")
             break;
         parsedTmpBuf = split(tmpBuf, ",");
-        if (parsedTmpBuf.size() != 3 || !isInteger(parsedTmpBuf[0]) || !isInteger(parsedTmpBuf[1]) || !isInteger(parsedTmpBuf[2]))
+        if (parsedTmpBuf.size() != 3 || !isInteger(parsedTmpBuf[0]) ||
+            !isInteger(parsedTmpBuf[1]) || !isInteger(parsedTmpBuf[2]))
             std::cout << "ERROR Board cell given is not valid" << std::endl;
         else {
             switch (std::stoi(parsedTmpBuf[2])) {
-                case 1:
-                    _board.setCaseState(std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::PLAYER);
-                    break;
-                case 2:
-                    _board.setCaseState(std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::OPPONENT);
-                    break;
-                default:
-                    std::cout << "ERROR Stone owner is not known" << std::endl;
-                    break;
+            case 1:
+                _board.setCaseState(
+                    std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::PLAYER);
+                break;
+            case 2:
+                _board.setCaseState(
+                    std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::OPPONENT);
+                break;
+            default:
+                std::cout << "ERROR Stone owner is not known" << std::endl;
+                break;
             }
         }
     }
@@ -182,7 +183,9 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
 {
     std::string key;
     if (parsedCommand.size() != 3) {
-        std::cout << "ERROR Info has " << (parsedCommand.size() < 3 ? "not enough arguments" : "too many arguments") << std::endl;
+        std::cout << "ERROR Info has "
+                  << (parsedCommand.size() < 3 ? "not enough arguments" : "too many arguments")
+                  << std::endl;
         return;
     }
     key = parsedCommand[1];
@@ -212,21 +215,21 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
         else {
             int gameType = std::stoi(parsedCommand[2]);
             switch (gameType) {
-                case 0:
-                    _game_type = GameType::HUMAN;
-                    break;
-                case 1:
-                    _game_type = GameType::BRAIN;
-                    break;
-                case 2:
-                    _game_type = GameType::TOURNAMENT;
-                    break;
-                case 3:
-                    _game_type = GameType::NETWORK_TOURNAMENT;
-                    break;
-                default:
-                    std::cout << "ERROR This game_type does not exists" << std::endl;
-                    break;
+            case 0:
+                _game_type = GameType::HUMAN;
+                break;
+            case 1:
+                _game_type = GameType::BRAIN;
+                break;
+            case 2:
+                _game_type = GameType::TOURNAMENT;
+                break;
+            case 3:
+                _game_type = GameType::NETWORK_TOURNAMENT;
+                break;
+            default:
+                std::cout << "ERROR This game_type does not exists" << std::endl;
+                break;
             }
         }
     } else if (key == "rule") {
@@ -244,7 +247,7 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
         std::vector<std::string> posArg = split(parsedCommand[2], ",");
         if (posArg.size() != 2)
             std::cout << "ERROR Evaluate does not have two positions" << std::endl;
-        else  {
+        else {
             if (!isInteger(posArg[0]) || !isInteger(posArg[1]))
                 std::cout << "ERROR Coordinates is not an integer" << std::endl;
             else {
@@ -259,14 +262,12 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
     }
 }
 
-void Core::endCommand(std::vector<std::string> &parsedCommand)
-{
-    _isRunning = false;
-}
+void Core::endCommand(std::vector<std::string> &parsedCommand) { _isRunning = false; }
 
 void Core::aboutCommand(std::vector<std::string> &parsedCommand)
 {
-    std::cout << "name=\"" << _name << "\", version=\"" << _version << "\", author=\"" << _authors << "\", country=\"" << _country << "\"" << std::endl;
+    std::cout << "name=\"" << _name << "\", version=\"" << _version << "\", author=\"" << _authors
+              << "\", country=\"" << _country << "\"" << std::endl;
 }
 
 void Core::rectstartCommand(std::vector<std::string> &parsedCommand)
