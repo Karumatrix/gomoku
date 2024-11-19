@@ -7,27 +7,28 @@
 
 #pragma once
 
-#include <vector>
+#include <array>
 #include <iostream>
 
 #include "GameCase.hpp"
 
 class GameBoard {
-    public:
-        GameBoard();
-        ~GameBoard();
+  public:
+    GameBoard();
+    ~GameBoard();
 
-        void resize(size_t newSize);
-        size_t getSize() const;
+    void resize(size_t newSize);
+    size_t getSize() const;
 
-        GameCase getCaseState(int x, int y) const;
-        void setCaseState(int x, int y, GameCase state);
-        float Evaluate();
+    GameCase getCaseState(int x, int y) const;
+    void setCaseState(int x, int y, GameCase state);
+    int evaluateLine(int x, int y, int dx, int dy);
+    float Evaluate();
 
-    protected:
-    private:
-        size_t _size = 0;
-        std::vector<GameCase> _board;
+    void printBoard() const;
 
-        int evaluateLine(int x, int y, int dx, int dy);
+  protected:
+  private:
+    size_t _size = 0;
+    std::array<std::array<GameCase, 20>, 20> _board;
 };
