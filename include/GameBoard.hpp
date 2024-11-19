@@ -26,8 +26,6 @@ class GameBoard {
 
         void printBoard() const;
 
-        void printBoard() const;
-
     protected:
     private:
         size_t _size = 0;
