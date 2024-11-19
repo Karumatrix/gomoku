@@ -44,18 +44,22 @@ int MiniMax::minimax(int depth, bool playerMax, int value) {
         return value; // temporary
     if (playerMax) {
         int maxInt = MAX_INT;
-        //for (std::pair<int, int> node: getPossibleMoves())
-        // _gameBoard.setCaseState(node.first, node.second, GameCase);
-        int max = minimax(depth + 1, false, value);
-        // _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
+        int max = 0;
+        for (std::pair<int, int> node: getPossibleMoves()) {
+            _gameBoard.setCaseState(node.first, node.second, GameCase::PLAYER);
+            max = minimax(depth + 1, false, value);
+            _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
+        }
         maxInt = std::max(maxInt, max);
         return maxInt;
     } else {
         int minInt = MIN_INT;
-        //for (std::pair<int, int> node: getPossibleMoves())
-        // _gameBoard.setCaseState(node.first, node.second, GameCase);
-        int min = minimax(depth + 1, true, value);
-        // _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT));
+        int min = 0;
+        for (std::pair<int, int> node: getPossibleMoves()) {
+            _gameBoard.setCaseState(node.first, node.second, GameCase::OPPONENT);
+            min = minimax(depth + 1, true, value);
+            _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
+        }
         minInt = std::min(minInt, min);
         return minInt;
     }

@@ -12,13 +12,14 @@
 #define MIN_INT -1000000
 
 #include "GameBoard.hpp"
+#include <vector>
 
 class MiniMax {
     public:
         MiniMax(GameBoard &gameboard);
         ~MiniMax();
 
-        int minimax(int depth, bool playerMax);
+        int minimax(int depth, bool playerMax, int value);
         std::vector<std::pair<int, int>> getPossibleMoves();
     protected:
     private:
