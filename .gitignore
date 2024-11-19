@@ -1,6 +1,6 @@
 *.o
 *.vscode
-*pbrain-gomoku-ai
+*pbrain-gomoku-ai*
 *vgcore*
 *.log
 liskvork
