@@ -50,8 +50,7 @@ void Core::run()
                 std::cout << "DEBUG Defense" << std::endl;
                 std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
             } else {
-                if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) ||
-                (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
+                if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) && (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
                     for (int x = 0; x < _board.getSize(); x++) {
                         for (int y = 0; y < _board.getSize(); y++) {
                             if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
