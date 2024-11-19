@@ -74,6 +74,8 @@ void Core::run()
                         std::cout << "DEBUG Defense" << std::endl;
                         std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
                     }
+                    if (positionFound)
+                        break;
                 }
             }
             positionFound = false;
