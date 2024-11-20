@@ -171,6 +171,7 @@ void Core::boardCommand(std::vector<std::string> &parsedCommand)
 
     while (1) {
         std::getline(std::cin, tmpBuf);
+        std::replace(tmpBuf.begin(), tmpBuf.end(), '\r', '\0');
         if (tmpBuf == "DONE")
             break;
         parsedTmpBuf = split(tmpBuf, ",");
