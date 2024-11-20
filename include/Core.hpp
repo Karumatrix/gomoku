@@ -57,7 +57,7 @@ class Core {
         bool _isMyTurn = false;
         bool _isGameStarted = false;
         GameBoard _board;
-        PatternMatching _defenseChecker;
+        PatternMatching _patternMatching;
         std::unordered_map<std::string, std::function<void(std::vector<std::string>&)>> _commands;
 
         std::string _name = "Platypus";

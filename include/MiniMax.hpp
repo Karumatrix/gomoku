@@ -12,6 +12,7 @@
 #define MIN_INT -1000000
 
 #include "GameBoard.hpp"
+#include "PatternMatching.hpp"
 #include <vector>
 
 class MiniMax {
@@ -19,9 +20,14 @@ class MiniMax {
         MiniMax(GameBoard &gameboard);
         ~MiniMax();
 
-        int minimax(int depth, bool playerMax, int value);
+        int minimax(int depth, bool playerMax);
         std::vector<std::pair<int, int>> getPossibleMoves();
+        int evaluateBoard();
+        bool isEnd();
+        bool checkWin(GameCase player);
+        bool checkDirection(int x, int y, int checkX, int checkY, GameCase player);
     protected:
     private:
+        PatternMatching _patternMatching;
         GameBoard _gameBoard;
 };
