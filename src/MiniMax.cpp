@@ -9,10 +9,15 @@
 
 MiniMax::MiniMax(GameBoard &gameboard) : _gameBoard(gameboard)
 {
+    _isEnd = false;
 }
 
 MiniMax::~MiniMax()
 {
+}
+
+std::pair<int, int> MiniMax::getBestMove() {
+    return _bestMove;
 }
 
 std::vector<std::pair<int, int>> MiniMax::getPossibleMoves() {
@@ -33,6 +38,10 @@ std::vector<std::pair<int, int>> MiniMax::getPossibleMoves() {
                 }
             }
         }
+    }
+    if (result.empty() && _gameBoard.getCaseState(size / 2, size / 2) == GameCase::DEFAULT) {
+        // std::cout << "DEBUG empty result." << std::endl;
+        result.push_back({size / 2, size / 2});
     }
     return result;
 }
@@ -69,16 +78,48 @@ bool MiniMax::checkDirection(int x, int y, int checkX, int checkY, GameCase play
     return true;
 }
 
-int MiniMax::evaluateBoard() {
+int MiniMax::PawnsNumber(int x, int y, int checkX, int checkY) {
+    int count = 0, newX = 0, newY = 0;
+    for (int i = 0; i < 5; i++) {
+        newX = x + i * checkX;
+        newY = y + i * checkY;
+        if (_gameBoard.getCaseState(newX, newY) == GameCase::PLAYER)
+            count += i + 1;
+        else
+            break;
+    }
+    return count;
+}
+
+int MiniMax::evaluation() {
     int result = 0;
-    auto bestDefense = _patternMatching.getBestPositions(_gameBoard, GameCase::PLAYER, GameCase::OPPONENT);
-    auto bestAttack = _patternMatching.getBestPositions(_gameBoard, GameCase::PLAYER, GameCase::OPPONENT);
+    for (int i = 0; i < _gameBoard.getSize(); ++i) {
+        for (int j = 0; j < _gameBoard.getSize(); ++j) {
+            result += PawnsNumber(i, j, 1, 0);
+            result += PawnsNumber(i, j, 0, 1);
+            result += PawnsNumber(i, j, 1, 1);
+            result += PawnsNumber(i, j, 1, -1);
+        }
+    }
     return result;
 }
 
+int MiniMax::evaluateBoard() {
+    if (_isEnd) {
+        if (checkWin(GameCase::PLAYER))
+            return 10000;
+        if (checkWin(GameCase::OPPONENT))
+            return -10000;
+        return 0;
+    }
+    return evaluation();
+}
+
 int MiniMax::minimax(int depth, bool playerMax) {
-    if (depth == MAX_DEPTH || isEnd()) // || end (genre la fin du jeu)
-        return evaluateBoard(); // temporary
+    _isEnd = isEnd();
+    std::pair<int, int> bestMove;
+    if (depth == MAX_DEPTH || _isEnd)
+        return evaluateBoard();
     if (playerMax) {
         int maxInt = MIN_INT;
         int max = 0;
@@ -87,7 +128,11 @@ int MiniMax::minimax(int depth, bool playerMax) {
             max = minimax(depth + 1, false);
             _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
             maxInt = std::max(maxInt, max);
+            if (maxInt == max)
+                bestMove = node;
         }
+        if (depth == 0)
+            _bestMove = bestMove;
         return maxInt;
     } else {
         int minInt = MAX_INT;
@@ -97,7 +142,11 @@ int MiniMax::minimax(int depth, bool playerMax) {
             min = minimax(depth + 1, true);
             _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
             minInt = std::min(minInt, min);
+            if (minInt == min)
+                bestMove = node;
         }
+        if (depth == 0)
+            _bestMove = bestMove;
         return minInt;
     }
 }

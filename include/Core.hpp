@@ -19,6 +19,7 @@
 #include "GameBoard.hpp"
 #include "Positions.hpp"
 #include "PatternMatching.hpp"
+#include "MiniMax.hpp"
 
 enum class GameType : size_t {
     HUMAN = 0,
@@ -58,6 +59,7 @@ class Core {
         bool _isGameStarted = false;
         GameBoard _board;
         PatternMatching _patternMatching;
+        MiniMax _minimax;
         std::unordered_map<std::string, std::function<void(std::vector<std::string>&)>> _commands;
 
         std::string _name = "Platypus";
