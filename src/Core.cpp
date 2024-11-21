@@ -40,7 +40,9 @@ void Core::run()
         if (_isRunning && _isGameStarted && _isMyTurn) {
             _minimax.minimax(0, true);
             auto move = _minimax.getBestMove();
+            std::cout << "DEBUG best move: " << move.first << "," << move.second << std::endl;
             std::cout << move.first << "," << move.second << std::endl;
+            _board.setCaseState(move.first, move.second, GameCase::PLAYER);
             // auto bestDefense = _patternMatching.getBestPositions(_board, GameCase::PLAYER, GameCase::OPPONENT);
             // auto bestAttack = _patternMatching.getBestPositions(_board, GameCase::OPPONENT, GameCase::PLAYER);
 

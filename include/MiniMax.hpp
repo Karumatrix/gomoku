@@ -7,7 +7,7 @@
 
 #pragma once
 
-#define MAX_DEPTH 3
+#define MAX_DEPTH 1
 #define MAX_INT 1000000
 #define MIN_INT -1000000
 
@@ -22,7 +22,7 @@ class MiniMax {
 
         int minimax(int depth, bool playerMax);
         std::vector<std::pair<int, int>> getPossibleMoves();
-        int PawnsNumber(int x, int y, int checkX, int checkY);
+        int PawnsNumber(int x, int y, int checkX, int checkY, GameCase player);
         int evaluation();
         int evaluateBoard();
         std::pair<int, int> getBestMove();
