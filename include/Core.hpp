@@ -7,21 +7,21 @@
 
 #pragma once
 
-#include <unordered_map>
-#include <vector>
+#include <algorithm>
+#include <bitset>
+#include <cstring>
 #include <functional>
 #include <iostream>
 #include <string>
-#include <algorithm>
-#include <cstring>
-#include <bitset>
+#include <unordered_map>
+#include <vector>
 
 #include "GameBoard.hpp"
-#include "Positions.hpp"
 #include "PatternMatching.hpp"
 #include "MiniMax.hpp"
 
-enum class GameType : size_t {
+enum class GameType : size_t
+{
     HUMAN = 0,
     BRAIN = 1,
     TOURNAMENT = 2,
@@ -73,6 +73,6 @@ class Core {
         int _time_left = 0;
         GameType _game_type = GameType::BRAIN;
         std::bitset<4> _rule;
-        Positions _evaluate = {0,0};
+        Positions _evaluate = {0, 0};
         std::string _folder = "";
 };

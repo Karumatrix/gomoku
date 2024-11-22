@@ -7,13 +7,9 @@
 
 #include "PatternMatching.hpp"
 
-PatternMatching::PatternMatching()
-{
-}
+PatternMatching::PatternMatching() {}
 
-PatternMatching::~PatternMatching()
-{
-}
+PatternMatching::~PatternMatching() {}
 
 std::pair<Positions, Priority> PatternMatching::getBestPositions(GameBoard &board, GameCase defense, GameCase attack)
 {
@@ -108,11 +104,12 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakn
 std::vector<std::pair<Positions, Priority>> &PatternMatching::addToBestPositions(std::vector<std::pair<Positions, Priority>> &positions, std::vector<Positions> &tmp, int &nbCaseTaken)
 {
     for (auto &pos : tmp) {
-        auto it = std::find_if(positions.begin(), positions.end(), [pos](std::pair<Positions, Priority> &posToCheck) {
-            if (posToCheck.first.x == pos.x && posToCheck.first.y == pos.y)
-                return true;
-            return false;
-        });
+        auto it = std::find_if(
+            positions.begin(), positions.end(), [pos](std::pair<Positions, Priority> &posToCheck) {
+                if (posToCheck.first.x == pos.x && posToCheck.first.y == pos.y)
+                    return true;
+                return false;
+            });
         if (it == positions.end()) {
             positions.push_back({{pos.x, pos.y}, {nbCaseTaken, 1}});
         } else {
