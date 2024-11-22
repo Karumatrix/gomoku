@@ -15,6 +15,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <ctime>
 
 #include "GameBoard.hpp"
 #include "PatternMatching.hpp"
