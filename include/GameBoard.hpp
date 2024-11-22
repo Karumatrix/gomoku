@@ -23,7 +23,7 @@ class GameBoard {
     GameCase getCaseState(int x, int y) const;
     void setCaseState(int x, int y, GameCase state);
     int evaluateLine(int x, int y, int dx, int dy, GameCase player);
-    float Evaluate();
+    int Evaluate(GameCase currPlayer);
 
     void printBoard() const;
 
