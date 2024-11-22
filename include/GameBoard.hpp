@@ -27,8 +27,8 @@ class GameBoard {
 
     void printBoard() const;
 
-  protected:
-  private:
-    size_t _size = 0;
-    std::array<std::array<GameCase, 20>, 20> _board;
+    protected:
+    private:
+        size_t _size = 0;
+        std::array<std::array<GameCase, 20>, 20> _board;
 };

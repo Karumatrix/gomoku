@@ -30,8 +30,8 @@ size_t GameBoard::getSize() const { return _size; }
 
 GameCase GameBoard::getCaseState(int x, int y) const
 {
-    if (x >= _size || y >= _size) {
-        std::cout << "ERROR getCaseState, Positions given are out of bounds" << std::endl;
+    if (x >= _size || y >= _size)
+    {
         return GameCase::OUTOFBOUND;
     }
     return _board[x][y];
@@ -39,14 +39,15 @@ GameCase GameBoard::getCaseState(int x, int y) const
 
 void GameBoard::setCaseState(int x, int y, GameCase state)
 {
-    if (x >= _size || y >= _size) {
-        std::cout << "ERROR Positions given are out of bounds" << std::endl;
+    if (x >= _size || y >= _size)
+    {
         return;
     }
     _board[x][y] = state;
 }
 
-int GameBoard::evaluateLine(int x, int y, int dx, int dy, GameCase player) {
+int GameBoard::evaluateLine(int x, int y, int dx, int dy, GameCase player)
+{
     int consecutive = 0;
     int openEnds = 0;
 
@@ -95,6 +96,7 @@ float GameBoard::Evaluate() {
 
     return score;
 }
+
 void GameBoard::printBoard() const
 {
     std::cout << "DEBUG Board: " << std::endl;
