@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
-#include "Positions.hpp"
 #include "GameBoard.hpp"
+#include "Positions.hpp"
 
 class PatternMatching {
     public:

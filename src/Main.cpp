@@ -9,7 +9,7 @@
 
 #include "Core.hpp"
 
-int main(int argc, char const* const* argv)
+int main(int argc, char const *const *argv)
 {
     if (argc > 2 && (argv[1] == "-h" || argv[1] == "--help")) {
         std::cout << "Usage: ./pbrain-gomoku-ai" << std::endl;

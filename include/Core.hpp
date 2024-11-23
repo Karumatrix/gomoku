@@ -7,20 +7,22 @@
 
 #pragma once
 
-#include <unordered_map>
-#include <vector>
+#include <algorithm>
+#include <bitset>
+#include <cstring>
 #include <functional>
 #include <iostream>
 #include <string>
-#include <algorithm>
-#include <cstring>
-#include <bitset>
+#include <unordered_map>
+#include <vector>
+#include <chrono>
 
 #include "GameBoard.hpp"
-#include "Positions.hpp"
 #include "PatternMatching.hpp"
+#include "MiniMax.hpp"
 
-enum class GameType : size_t {
+enum class GameType : size_t
+{
     HUMAN = 0,
     BRAIN = 1,
     TOURNAMENT = 2,
@@ -51,6 +53,7 @@ class Core {
         void swap2boardCommand(std::vector<std::string> &parsedCommand);
 
         bool isInteger(const std::string &str);
+        bool runPatternMatching();
 
     private:
         bool _isRunning = true;
@@ -58,6 +61,7 @@ class Core {
         bool _isGameStarted = false;
         GameBoard _board;
         PatternMatching _patternMatching;
+        MiniMax _minimax;
         std::unordered_map<std::string, std::function<void(std::vector<std::string>&)>> _commands;
 
         std::string _name = "Platypus";
@@ -71,6 +75,6 @@ class Core {
         int _time_left = 0;
         GameType _game_type = GameType::BRAIN;
         std::bitset<4> _rule;
-        Positions _evaluate = {0,0};
+        Positions _evaluate = {0, 0};
         std::string _folder = "";
 };
