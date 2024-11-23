@@ -9,7 +9,8 @@ SRC_MAIN	=	Main.cpp
 
 SRC			=	Core.cpp				\
 				GameBoard.cpp			\
-				PatternMatching.cpp
+				PatternMatching.cpp		\
+				MiniMax.cpp
 
 OBJ_MAIN 	= $(addprefix src/, $(SRC_MAIN:.cpp=.o))
 

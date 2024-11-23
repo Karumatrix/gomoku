@@ -9,7 +9,8 @@
 
 #include <cstdint>
 
-enum class GameCase : uint32_t {
+enum class GameCase : uint32_t
+{
     DEFAULT,
     PLAYER,
     OPPONENT,

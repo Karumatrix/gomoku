@@ -7,7 +7,7 @@
 
 #include "Core.hpp"
 
-Core::Core()
+Core::Core() : _minimax(_board)
 {
     _commands["TURN"] = std::bind(&Core::turnCommand, this, std::placeholders::_1);
     _commands["START"] = std::bind(&Core::startCommand, this, std::placeholders::_1);
@@ -23,14 +23,11 @@ Core::Core()
     _commands["SWAP2BOARD"] = std::bind(&Core::swap2boardCommand, this, std::placeholders::_1);
 }
 
-Core::~Core()
-{
-}
+Core::~Core() {}
 
 void Core::run()
 {
     std::string commandBuf;
-    bool positionFound = false;
 
     while (_isRunning) {
         commandBuf.clear();
@@ -38,45 +35,53 @@ void Core::run()
         redirect_command(commandBuf);
         commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            auto bestDefense = _patternMatching.getBestPositions(_board, GameCase::PLAYER, GameCase::OPPONENT);
-            auto bestAttack = _patternMatching.getBestPositions(_board, GameCase::OPPONENT, GameCase::PLAYER);
-
-            if (bestAttack.second.size == 4) {
-                _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
-                std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
-            } else if (bestDefense.second.size == 4) {
-                _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
-                std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
-            } else {
-                if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) && (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
-                    for (int x = 0; x < _board.getSize(); x++) {
-                        for (int y = 0; y < _board.getSize(); y++) {
-                            if (_board.getCaseState(x, y) == GameCase::DEFAULT) {
-                                _board.setCaseState(x, y, GameCase::PLAYER);
-                                std::cout << x << "," << y << std::endl;
-                                positionFound = true;
-                                break;
-                            }
-                        }
-                        if (positionFound)
-                            break;
-                    }
-                } else {
-                    if (bestAttack.second.nbAlreadyFound > bestDefense.second.nbAlreadyFound) {
-                        _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
-                        std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
-                    } else {
-                        _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
-                        std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
-                    }
-                    if (positionFound)
+            if (!runPatternMatching()) {
+                auto startTime = std::chrono::high_resolution_clock::now();
+                auto timeLimit = std::chrono::milliseconds(this->_timeout_turn - 100);
+                int maxDepth = 1;
+                auto move = _minimax.getBestMove();
+                while (true) {
+                    auto now = std::chrono::high_resolution_clock::now();
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime) >= timeLimit)
                         break;
+                    _minimax.minimax(0, GameCase::PLAYER, MIN_INT, MAX_INT, maxDepth, startTime);
+                    if (_minimax.getIsFinished())
+                        move = _minimax.getBestMove();
+                    maxDepth++;
                 }
+                _board.setCaseState(move.first, move.second, GameCase::PLAYER);
+                std::cout << move.first << "," << move.second << std::endl;
             }
-            positionFound = false;
             _isMyTurn = false;
         }
     }
+}
+
+bool Core::runPatternMatching()
+{
+    auto bestDefense = _patternMatching.getBestPositions(_board, GameCase::PLAYER, GameCase::OPPONENT);
+    auto bestAttack = _patternMatching.getBestPositions(_board, GameCase::OPPONENT, GameCase::PLAYER);
+
+    if (bestAttack.second.size == 4) {
+        _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
+        std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
+    } else if (bestDefense.second.size == 4) {
+        _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
+        std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
+    } else {
+        if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) && (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
+            return false;
+        } else {
+            if (bestAttack.second.nbAlreadyFound > bestDefense.second.nbAlreadyFound) {
+                _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
+                std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
+            } else {
+                _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
+                std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
+            }
+        }
+    }
+    return true;
 }
 
 void Core::redirect_command(std::string &command)
@@ -96,9 +101,9 @@ bool Core::isInteger(const std::string &str)
         std::size_t pos;
         std::stoi(str, &pos);
         return pos == str.size();
-    } catch (const std::invalid_argument&) {
+    } catch (const std::invalid_argument &) {
         return false;
-    } catch (const std::out_of_range&) {
+    } catch (const std::out_of_range &) {
         return false;
     }
 }
@@ -132,7 +137,8 @@ void Core::turnCommand(std::vector<std::string> &parsedCommand)
         if (positionsArg.size() != 2 || !isInteger(positionsArg[0]) || !isInteger(positionsArg[1]))
             std::cout << "ERROR Coordinates must be two integers" << std::endl;
         else {
-            _board.setCaseState(std::stoi(positionsArg[0]), std::stoi(positionsArg[1]), GameCase::OPPONENT);
+            _board.setCaseState(
+                std::stoi(positionsArg[0]), std::stoi(positionsArg[1]), GameCase::OPPONENT);
             _isMyTurn = true;
         }
     }
@@ -159,10 +165,7 @@ void Core::startCommand(std::vector<std::string> &parsedCommand)
     }
 }
 
-void Core::beginCommand(std::vector<std::string> &parsedCommand)
-{
-    _isMyTurn = true;
-}
+void Core::beginCommand(std::vector<std::string> &parsedCommand) { _isMyTurn = true; }
 
 void Core::boardCommand(std::vector<std::string> &parsedCommand)
 {
@@ -175,19 +178,22 @@ void Core::boardCommand(std::vector<std::string> &parsedCommand)
         if (tmpBuf == "DONE")
             break;
         parsedTmpBuf = split(tmpBuf, ",");
-        if (parsedTmpBuf.size() != 3 || !isInteger(parsedTmpBuf[0]) || !isInteger(parsedTmpBuf[1]) || !isInteger(parsedTmpBuf[2]))
+        if (parsedTmpBuf.size() != 3 || !isInteger(parsedTmpBuf[0]) ||
+            !isInteger(parsedTmpBuf[1]) || !isInteger(parsedTmpBuf[2]))
             std::cout << "ERROR Board cell given is not valid" << std::endl;
         else {
             switch (std::stoi(parsedTmpBuf[2])) {
-                case 1:
-                    _board.setCaseState(std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::PLAYER);
-                    break;
-                case 2:
-                    _board.setCaseState(std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::OPPONENT);
-                    break;
-                default:
-                    std::cout << "ERROR Stone owner is not known" << std::endl;
-                    break;
+            case 1:
+                _board.setCaseState(
+                    std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::PLAYER);
+                break;
+            case 2:
+                _board.setCaseState(
+                    std::stoi(parsedTmpBuf[0]), std::stoi(parsedTmpBuf[1]), GameCase::OPPONENT);
+                break;
+            default:
+                std::cout << "ERROR Stone owner is not known" << std::endl;
+                break;
             }
         }
     }
@@ -206,8 +212,10 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
     if (key == "timeout_turn") {
         if (!isInteger(parsedCommand[2]))
             std::cout << "ERROR Value is not an integer" << std::endl;
-        else
+        else {
             _timeout_turn = std::stoi(parsedCommand[2]);
+            _minimax.setTimeLimit(std::stoi(parsedCommand[2]));
+        }
     } else if (key == "timeout_match") {
         if (!isInteger(parsedCommand[2]))
             std::cout << "ERROR Value is not an integer" << std::endl;
@@ -229,21 +237,21 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
         else {
             int gameType = std::stoi(parsedCommand[2]);
             switch (gameType) {
-                case 0:
-                    _game_type = GameType::HUMAN;
-                    break;
-                case 1:
-                    _game_type = GameType::BRAIN;
-                    break;
-                case 2:
-                    _game_type = GameType::TOURNAMENT;
-                    break;
-                case 3:
-                    _game_type = GameType::NETWORK_TOURNAMENT;
-                    break;
-                default:
-                    std::cout << "ERROR This game_type does not exists" << std::endl;
-                    break;
+            case 0:
+                _game_type = GameType::HUMAN;
+                break;
+            case 1:
+                _game_type = GameType::BRAIN;
+                break;
+            case 2:
+                _game_type = GameType::TOURNAMENT;
+                break;
+            case 3:
+                _game_type = GameType::NETWORK_TOURNAMENT;
+                break;
+            default:
+                std::cout << "ERROR This game_type does not exists" << std::endl;
+                break;
             }
         }
     } else if (key == "rule") {
@@ -261,7 +269,7 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
         std::vector<std::string> posArg = split(parsedCommand[2], ",");
         if (posArg.size() != 2)
             std::cout << "ERROR Evaluate does not have two positions" << std::endl;
-        else  {
+        else {
             if (!isInteger(posArg[0]) || !isInteger(posArg[1]))
                 std::cout << "ERROR Coordinates is not an integer" << std::endl;
             else {
@@ -276,10 +284,7 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
     }
 }
 
-void Core::endCommand(std::vector<std::string> &parsedCommand)
-{
-    _isRunning = false;
-}
+void Core::endCommand(std::vector<std::string> &parsedCommand) { _isRunning = false; }
 
 void Core::aboutCommand(std::vector<std::string> &parsedCommand)
 {
