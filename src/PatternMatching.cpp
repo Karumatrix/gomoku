@@ -91,12 +91,12 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakn
     nbCaseTaken = 0;
     tmpPos.clear();
     for (int i = 4; i >= 0; i--) {
-        if (board.getCaseState(x + (4 - i), y + i) == defense || board.getCaseState(x + (4 - i), y + i) == GameCase::OUTOFBOUND)
+        if (board.getCaseState(x + (4 - i), y - (4 - i)) == defense || board.getCaseState(x + (4 - i), y - (4 - i)) == GameCase::OUTOFBOUND)
             return bestPos;
-        if (board.getCaseState(x + (4 - i), y + i) == attack)
+        if (board.getCaseState(x + (4 - i), y - (4 - i)) == attack)
             nbCaseTaken += 1;
-        if (board.getCaseState(x + (4 - i), y + i) == GameCase::DEFAULT)
-            tmpPos.push_back({x + (4 - i), y + i});
+        if (board.getCaseState(x + (4 - i), y - (4 - i)) == GameCase::DEFAULT)
+            tmpPos.push_back({x + (4 - i), y - (4 - i)});
     }
     if (nbCaseTaken >= MAX_SIZE && tmpPos.size() > 0)
         bestPos = addToBestPositions(bestPos, tmpPos, nbCaseTaken);
