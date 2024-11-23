@@ -28,7 +28,6 @@ Core::~Core() {}
 void Core::run()
 {
     std::string commandBuf;
-    bool positionFound = false;
 
     while (_isRunning) {
         commandBuf.clear();
@@ -36,37 +35,53 @@ void Core::run()
         redirect_command(commandBuf);
         commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            auto bestDefense = _patternMatching.getBestPositions(_board, GameCase::PLAYER, GameCase::OPPONENT);
-            auto bestAttack = _patternMatching.getBestPositions(_board, GameCase::OPPONENT, GameCase::PLAYER);
-
-            // if (bestAttack.second.size == 4) {
-            //     _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
-            //     std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
-            // } else if (bestDefense.second.size == 4) {
-            //     _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
-            //     std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
-            // } else {
-                // if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) && (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
-                    _minimax.minimax(0, GameCase::PLAYER, MIN_INT, MAX_INT);
-                    auto move = _minimax.getBestMove();
-                    std::cout << move.first << "," << move.second << std::endl;
-                    _board.setCaseState(move.first, move.second, GameCase::PLAYER);
-                // } else {
-                //     if (bestAttack.second.nbAlreadyFound > bestDefense.second.nbAlreadyFound) {
-                //         _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
-                //         std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
-                //     } else {
-                //         _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
-                //         std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
-                //     }
-                //     if (positionFound)
-                //         break;
-                // }
-            // }
-            positionFound = false;
+            if (!runPatternMatching()) {
+                auto startTime = std::chrono::high_resolution_clock::now();
+                auto timeLimit = std::chrono::milliseconds(this->_timeout_turn - 100);
+                int maxDepth = 1;
+                auto move = _minimax.getBestMove();
+                while (true) {
+                    auto now = std::chrono::high_resolution_clock::now();
+                    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime) >= timeLimit)
+                        break;
+                    _minimax.minimax(0, GameCase::PLAYER, MIN_INT, MAX_INT, maxDepth, startTime);
+                    if (_minimax.getIsFinished())
+                        move = _minimax.getBestMove();
+                    maxDepth++;
+                }
+                _board.setCaseState(move.first, move.second, GameCase::PLAYER);
+                std::cout << move.first << "," << move.second << std::endl;
+            }
             _isMyTurn = false;
         }
     }
+}
+
+bool Core::runPatternMatching()
+{
+    auto bestDefense = _patternMatching.getBestPositions(_board, GameCase::PLAYER, GameCase::OPPONENT);
+    auto bestAttack = _patternMatching.getBestPositions(_board, GameCase::OPPONENT, GameCase::PLAYER);
+
+    if (bestAttack.second.size == 4) {
+        _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
+        std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
+    } else if (bestDefense.second.size == 4) {
+        _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
+        std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
+    } else {
+        if ((bestAttack.first.x == -1 && bestAttack.first.y == -1) && (bestDefense.first.x == -1 && bestDefense.first.y == -1)) {
+            return false;
+        } else {
+            if (bestAttack.second.nbAlreadyFound > bestDefense.second.nbAlreadyFound) {
+                _board.setCaseState(bestAttack.first.x, bestAttack.first.y, GameCase::PLAYER);
+                std::cout << bestAttack.first.x << "," << bestAttack.first.y << std::endl;
+            } else {
+                _board.setCaseState(bestDefense.first.x, bestDefense.first.y, GameCase::PLAYER);
+                std::cout << bestDefense.first.x << "," << bestDefense.first.y << std::endl;
+            }
+        }
+    }
+    return true;
 }
 
 void Core::redirect_command(std::string &command)
@@ -197,8 +212,10 @@ void Core::infoCommand(std::vector<std::string> &parsedCommand)
     if (key == "timeout_turn") {
         if (!isInteger(parsedCommand[2]))
             std::cout << "ERROR Value is not an integer" << std::endl;
-        else
+        else {
             _timeout_turn = std::stoi(parsedCommand[2]);
+            _minimax.setTimeLimit(std::stoi(parsedCommand[2]));
+        }
     } else if (key == "timeout_match") {
         if (!isInteger(parsedCommand[2]))
             std::cout << "ERROR Value is not an integer" << std::endl;

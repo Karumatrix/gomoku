@@ -61,9 +61,9 @@ int GameBoard::evaluateLine(int x, int y, int dx, int dy, GameCase player)
     }
     int prevX = x - dx, prevY = y - dy;
     int nextX = x + consecutive * dx, nextY = y + consecutive * dy;
-    if (getCaseState(prevY, prevX) == GameCase::DEFAULT)
+    if (getCaseState(prevX, prevY) == GameCase::DEFAULT)
         openEnds++;
-    if (getCaseState(nextY, nextX) == GameCase::DEFAULT)
+    if (getCaseState(nextX, nextY) == GameCase::DEFAULT)
         openEnds++;
 
     if (consecutive == 5) return 10000;

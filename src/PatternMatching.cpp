@@ -5,7 +5,7 @@
 ** PatternMatching
 */
 
-#define MAX_SIZE 3
+#define MAX_SIZE 2
 
 #include "PatternMatching.hpp"
 
@@ -59,7 +59,7 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkHorizontalWea
     std::vector<Positions> tmpPos;
 
     for (int i = 0; i < 5; i++) {
-        if (board.getCaseState(x, y + i) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
+        if (board.getCaseState(x, y + i) == defense || board.getCaseState(x, y + i) == GameCase::OUTOFBOUND)
             return bestPos;
         if (board.getCaseState(x, y + i) == attack)
             nbCaseTaken += 1;
@@ -77,7 +77,7 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakn
     std::vector<Positions> tmpPos;
 
     for (int i = 0; i < 5; i++) {
-        if (board.getCaseState(x + i, y + i) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND) {
+        if (board.getCaseState(x + i, y + i) == defense || board.getCaseState(x + i, y + i) == GameCase::OUTOFBOUND) {
             tmpPos.clear();
             break;
         }
@@ -91,7 +91,7 @@ std::vector<std::pair<Positions, Priority>> &PatternMatching::checkDiagonalWeakn
     nbCaseTaken = 0;
     tmpPos.clear();
     for (int i = 4; i >= 0; i--) {
-        if (board.getCaseState(x + (4 - i), y + i) == defense || board.getCaseState(x + i, y) == GameCase::OUTOFBOUND)
+        if (board.getCaseState(x + (4 - i), y + i) == defense || board.getCaseState(x + (4 - i), y + i) == GameCase::OUTOFBOUND)
             return bestPos;
         if (board.getCaseState(x + (4 - i), y + i) == attack)
             nbCaseTaken += 1;

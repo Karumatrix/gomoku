@@ -20,6 +20,14 @@ std::pair<int, int> MiniMax::getBestMove() {
     return _bestMove;
 }
 
+void MiniMax::setTimeLimit(int newLimit) {
+    _timeLimit = newLimit;
+}
+
+bool MiniMax::getIsFinished() const {
+    return _isFinished;
+}
+
 std::vector<std::pair<int, int>> MiniMax::getPossibleMoves() {
     std::vector<std::pair<int, int>> result;
     size_t size = _gameBoard.getSize();
@@ -91,41 +99,23 @@ int MiniMax::PawnsNumber(int x, int y, int checkX, int checkY) {
     return count;
 }
 
-int MiniMax::evaluation() {
-    int result = 0;
-    for (int i = 0; i < _gameBoard.getSize(); ++i) {
-        for (int j = 0; j < _gameBoard.getSize(); ++j) {
-            result += PawnsNumber(i, j, 1, 0);
-            result += PawnsNumber(i, j, 0, 1);
-            result += PawnsNumber(i, j, 1, 1);
-            result += PawnsNumber(i, j, 1, -1);
-        }
-    }
-    return result;
-}
-
-int MiniMax::evaluateBoard() {
-    if (_isEnd) {
-        if (checkWin(GameCase::PLAYER))
-            return 10000;
-        if (checkWin(GameCase::OPPONENT))
-            return -10000;
-        return 0;
-    }
-    return evaluation();
-}
-
-int MiniMax::minimax(int depth, GameCase currPlayer, int alpha, int beta) {
+int MiniMax::minimax(int depth, GameCase currPlayer, int alpha, int beta, int maxDepth, TimePoint start) {
     _isEnd = isEnd();
+    _isFinished = true;
     std::pair<int, int> bestMove;
-    if (depth == MAX_DEPTH || _isEnd)
+    if (depth == maxDepth || _isEnd)
         return _gameBoard.Evaluate(currPlayer) * (-1);
     if (currPlayer == GameCase::PLAYER) {
         int best = MIN_INT;
         int max = 0;
         for (std::pair<int, int> node: getPossibleMoves()) {
+            auto now = std::chrono::high_resolution_clock::now();
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start) >= std::chrono::milliseconds(this->_timeLimit - 100)) {
+                _isFinished = false;
+                break;
+            }
             _gameBoard.setCaseState(node.first, node.second, GameCase::PLAYER);
-            max = minimax(depth + 1, GameCase::OPPONENT, alpha, beta);
+            max = minimax(depth + 1, GameCase::OPPONENT, alpha, beta, maxDepth, start);
             _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
             best = std::max(best, max);
             alpha = std::max(alpha, best);
@@ -141,8 +131,13 @@ int MiniMax::minimax(int depth, GameCase currPlayer, int alpha, int beta) {
         int best = MAX_INT;
         int min = 0;
         for (std::pair<int, int> node: getPossibleMoves()) {
+            auto now = std::chrono::high_resolution_clock::now();
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - start) >= std::chrono::milliseconds(this->_timeLimit - 100)) {
+                _isFinished = false;
+                break;
+            }
             _gameBoard.setCaseState(node.first, node.second, GameCase::OPPONENT);
-            min = minimax(depth + 1, GameCase::PLAYER, alpha, beta);
+            min = minimax(depth + 1, GameCase::PLAYER, alpha, beta, maxDepth, start);
             _gameBoard.setCaseState(node.first, node.second, GameCase::DEFAULT);
             best = std::min(best, min);
             beta = std::min(beta, best);

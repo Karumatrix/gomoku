@@ -15,7 +15,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <ctime>
+#include <chrono>
 
 #include "GameBoard.hpp"
 #include "PatternMatching.hpp"
@@ -53,6 +53,7 @@ class Core {
         void swap2boardCommand(std::vector<std::string> &parsedCommand);
 
         bool isInteger(const std::string &str);
+        bool runPatternMatching();
 
     private:
         bool _isRunning = true;
