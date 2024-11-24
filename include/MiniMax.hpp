@@ -37,6 +37,6 @@ class MiniMax {
         GameBoard &_gameBoard;
         bool _isEnd = false;
         std::pair<int, int> _bestMove = {0, 0};
-        int _timeLimit = 0;
+        int _timeLimit = 5000;
         bool _isFinished = true;
 };

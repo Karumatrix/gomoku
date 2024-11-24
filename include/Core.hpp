@@ -69,7 +69,7 @@ class Core {
         std::string _authors = "Babouuchee, Zelda_lol, Karumapathetic";
         std::string _country = "FR";
 
-        int _timeout_turn = 0;
+        int _timeout_turn = 5000;
         int _timeout_match = 0;
         int _max_memory = 0;
         int _time_left = 0;

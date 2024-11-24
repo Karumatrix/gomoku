@@ -137,8 +137,7 @@ void Core::turnCommand(std::vector<std::string> &parsedCommand)
         if (positionsArg.size() != 2 || !isInteger(positionsArg[0]) || !isInteger(positionsArg[1]))
             std::cout << "ERROR Coordinates must be two integers" << std::endl;
         else {
-            _board.setCaseState(
-                std::stoi(positionsArg[0]), std::stoi(positionsArg[1]), GameCase::OPPONENT);
+            _board.setCaseState(std::stoi(positionsArg[0]), std::stoi(positionsArg[1]), GameCase::OPPONENT);
             _isMyTurn = true;
         }
     }
