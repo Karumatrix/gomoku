@@ -26,6 +26,7 @@ class GameBoard {
     int Evaluate(GameCase currPlayer);
 
     void printBoard() const;
+    std::pair<int, int> findFirstPosFree() const;
 
     protected:
     private:

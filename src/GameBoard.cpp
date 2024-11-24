@@ -120,3 +120,14 @@ void GameBoard::printBoard() const
         std::cout << std::endl;
     }
 }
+
+std::pair<int, int> GameBoard::findFirstPosFree() const
+{
+    for (int x = 0; x < _size; x++) {
+        for (int y = 0; y < _size; y++) {
+            if (_board[x][y] == GameCase::DEFAULT)
+                return std::make_pair(x, y);
+        }
+    }
+    return std::make_pair(-1, -1);
+}

@@ -35,6 +35,12 @@ void Core::run()
         redirect_command(commandBuf);
         commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
+            if (this->_timeout_turn == 0) {
+                auto move = _board.findFirstPosFree();
+                _board.setCaseState(move.first, move.second, GameCase::PLAYER);
+                std::cout << move.first << "," << move.second << std::endl;
+                continue;
+            }
             if (!runPatternMatching()) {
                 auto startTime = std::chrono::high_resolution_clock::now();
                 auto timeLimit = std::chrono::milliseconds(this->_timeout_turn - 100);
