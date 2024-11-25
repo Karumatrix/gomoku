@@ -35,7 +35,7 @@ void Core::run()
         redirect_command(commandBuf);
         commandBuf.clear();
         if (_isRunning && _isGameStarted && _isMyTurn) {
-            if (this->_timeout_turn < 100) {
+            if (this->_timeout_turn < 150) {
                 auto move = _board.findFirstPosFree();
                 _board.setCaseState(move.first, move.second, GameCase::PLAYER);
                 std::cout << move.first << "," << move.second << std::endl;
