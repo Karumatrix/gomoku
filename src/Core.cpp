@@ -39,6 +39,7 @@ void Core::run()
                 auto move = _board.findFirstPosFree();
                 _board.setCaseState(move.first, move.second, GameCase::PLAYER);
                 std::cout << move.first << "," << move.second << std::endl;
+                _isMyTurn = false;
                 continue;
             }
             if (!runPatternMatching()) {
